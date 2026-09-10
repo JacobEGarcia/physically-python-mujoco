@@ -1,0 +1,39 @@
+<mujoco model="scribe-g1 scene">
+  <include file="g1_patched.xml"/>
+
+  <visual>
+    <headlight diffuse="0.55 0.55 0.55" ambient="0.25 0.25 0.25" specular="0.5 0.5 0.5"/>
+    <rgba haze="0.03 0.04 0.06 1"/>
+    <global azimuth="140" elevation="-18" offwidth="1280" offheight="720"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.16 0.24 0.34" rgb2="0.01 0.01 0.02" width="512" height="3072"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.16 0.17 0.19" rgb2="0.10 0.11 0.13"
+      markrgb="0.35 0.4 0.45" width="300" height="300"/>
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.15"/>
+    <material name="boardmat" rgba="0.92 0.93 0.95 1" specular="0.4" shininess="0.4"/>
+    <material name="penmat" rgba="0.08 0.08 0.1 1" specular="0.5" shininess="0.3"/>
+  </asset>
+
+  <equality>
+    <weld body1="pelvis" torquescale="0" solref="0.004 1" solimp="0.99 0.999 0.001"/>
+  </equality>
+
+  <worldbody>
+    <geom name="floor" size="0 0 0.05" type="plane" material="groundplane"/>
+    <include file="ink_geoms.xml"/>
+    <light name="spot" pos="0.3 -0.5 2.8" dir="-0.1 0.2 -1" directional="false" castshadow="true"
+      diffuse="1 1 1" specular="0.4 0.4 0.4" attenuation="1 0.08 0.01" cutoff="55" exponent="6"/>
+    <light name="fill" pos="-1.5 1.5 1.8" dir="0.5 -0.5 -0.6" castshadow="false" diffuse="0.35 0.42 0.55"/>
+    <!-- whiteboard: vertical panel at x=0.48, facing the robot (-x normal) -->
+    <body name="whiteboard" pos="0.45 0 1.15">
+      <geom name="board" type="box" size="0.012 0.24 0.30" material="boardmat" contype="0" conaffinity="0"/>
+      <geom name="boardframe" type="box" size="0.018 0.252 0.312" pos="0.008 0 0" rgba="0.13 0.14 0.16 1" contype="0" conaffinity="0"/>
+    </body>
+    <!-- easel legs -->
+    <geom name="leg1" type="capsule" fromto="0.52 -0.16 0.87 0.62 -0.16 0.001" size="0.012" rgba="0.2 0.2 0.22 1"/>
+    <geom name="leg2" type="capsule" fromto="0.52 0.16 0.87 0.62 0.16 0.001" size="0.012" rgba="0.2 0.2 0.22 1"/>
+    <geom name="leg3" type="capsule" fromto="0.44 0 0.87 0.30 0 0.001" size="0.012" rgba="0.2 0.2 0.22 1"/>
+  </worldbody>
+</mujoco>
