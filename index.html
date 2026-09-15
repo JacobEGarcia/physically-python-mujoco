@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PHYSICALLY PYTHON (MuJoCo)</title>
+<meta name="description" content="A Unitree G1 humanoid physically writes Python on a whiteboard - rebuilt with MuJoCo and the official MuJoCo Menagerie model.">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0b0b0c;color:#e8e6e1;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;line-height:1.6;padding:0 20px 80px}
+  .wrap{max-width:860px;margin:0 auto}
+  header{padding:64px 0 28px;border-bottom:1px solid #26262a;margin-bottom:32px}
+  .eyebrow{font-size:11px;letter-spacing:4px;color:#8a8577;text-transform:uppercase}
+  h1{font-size:clamp(26px,5vw,42px);font-weight:600;letter-spacing:1px;margin:10px 0 14px}
+  .sub{color:#b7b2a6;font-size:15px;max-width:62ch}
+  h2{font-size:13px;letter-spacing:3px;text-transform:uppercase;color:#8a8577;margin:44px 0 16px}
+  pre{background:#141416;border:1px solid #26262a;padding:18px 20px;overflow-x:auto;font-size:13.5px;border-radius:6px}
+  code{font-family:inherit}
+  ul{padding-left:20px;color:#c9c5ba}
+  li{margin:7px 0}
+  .shots{display:grid;grid-template-columns:1fr;gap:14px;margin-top:8px}
+  .shots img{width:100%;border:1px solid #26262a;border-radius:6px;display:block}
+  .cap{font-size:12px;color:#8a8577;margin-top:6px}
+  .cols{display:grid;grid-template-columns:1fr;gap:24px}
+  @media(min-width:720px){.cols{grid-template-columns:1fr 1fr}.shots{grid-template-columns:1fr 1fr 1fr}}
+  a{color:#d8c98a;text-decoration:none;border-bottom:1px solid #4a4433}
+  a:hover{color:#efe2ae}
+  .note{font-size:12.5px;color:#8a8577;margin-top:10px}
+  footer{margin-top:64px;padding-top:20px;border-top:1px solid #26262a;font-size:12.5px;color:#8a8577}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow">MuJoCo Menagerie &middot; Unitree G1 &middot; simulation</div>
+  <h1>PHYSICALLY PYTHON</h1>
+  <p class="sub">A Unitree G1 humanoid physically writes Python on a whiteboard &mdash; rebuilt with
+  MuJoCo and the official MuJoCo Menagerie Unitree G1 model. The robot writes the Fibonacci script
+  letter by letter.</p>
+</header>
+
+<pre><code>def fib(n):
+  a, b = 0, 1
+  for _ in range(n):
+    a, b = b, a + b
+  return a</code></pre>
+
+<h2>Frames from the simulation</h2>
+<div class="shots">
+  <figure><img src="out/shot_early.png" alt="Early frame: G1 at the whiteboard starting the script"><figcaption class="cap">Early &mdash; first strokes</figcaption></figure>
+  <figure><img src="out/shot_mid.png" alt="Mid frame: the Fibonacci script half written"><figcaption class="cap">Mid &mdash; halfway through the script</figcaption></figure>
+  <figure><img src="out/shot_final.png" alt="Final frame: completed Fibonacci script on the whiteboard"><figcaption class="cap">Final &mdash; the finished script</figcaption></figure>
+</div>
+
+<div class="cols">
+<section>
+<h2>Physically simulated (MuJoCo 3.x, 500 Hz)</h2>
+<ul>
+  <li>Full rigid-body dynamics of the 29-DoF Menagerie Unitree G1 (masses, inertias, meshes, joint limits, friction loss, armature from the official model)</li>
+  <li>The Menagerie position actuators (kp=500, critically damped) that track the joint trajectory, including their force limits</li>
+  <li>Gravity, the easel, the pen rigidly held in the right hand</li>
+</ul>
+</section>
+<section>
+<h2>Scripted (not physics)</h2>
+<ul>
+  <li>The whiteboard text path itself: letter strokes are a small hand-made vector font; the pen-tip Cartesian path is scripted</li>
+  <li>The joint trajectory: computed offline by damped least-squares inverse kinematics over 9 joints, then tracked by the simulated actuators. Residual pen-tip error during drawing is ~1 mm</li>
+  <li>The pelvis is welded to the world: an upper-body manipulation demo, not a balance controller</li>
+  <li>Ink: stroke segments are revealed where the actual simulated pen tip passes within 12 mm of them</li>
+</ul>
+</section>
+</div>
+
+<h2>Run it</h2>
+<pre><code>pip install -r requirements.txt
+./fetch_model.sh          # sparse-clones MuJoCo Menagerie (unitree_g1 only)
+MUJOCO_GL=egl python3 write_python.py   # use MUJOCO_GL=osmesa or glfw as available</code></pre>
+<p class="note">No physical robot was used. Both this and the original post are simulations. Inspired by @dimentary's sim video (quoted by @chris_j_paxton).</p>
+
+<footer>
+  Source, design notes and pipeline writeup: <a href="https://github.com/JacobEGarcia/physically-python-mujoco">github.com/JacobEGarcia/physically-python-mujoco</a>
+</footer>
+</div>
+</body>
+</html>
